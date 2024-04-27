@@ -1,5 +1,5 @@
 
-import numpy as np  # Bibliotecas para manipular matrizes
+import numpy as np  # Libraries for manipulating arrays
 
 
 class TicTacToe:
@@ -17,99 +17,98 @@ class TicTacToe:
         print("BOA SORTE! VOCÊ VAI PRECISAR;)\n")
         self.separate()
 
-    # Função que cria os tabuleiros de várias dimensões
+    # Function that creates n-dimensional game tables
     def create_game_board(self, size):
         # Criando o tabuleiro inicialmente vazio
         return np.full((size, size), " ")
 
 
-    # Função que exibe o tabuleiro com numerações na parte de cima e das laterais para guiar o jogador
+    # Function that shows game table with numbers above and on the sides to guide players
     def show_game_board(self, game_board):
-        # Váriavel que retorna o tamanho do tabuleiro como uma tupla
+        # Variable that returns the table number as a tuple
         size = game_board.shape[0]
 
-        # Exibe números na parte de cima que facilitam a visualização do jogo
+        # Shows numbers above that make it easier to see the game
         print("   " + "   ".join(str(i) for i in range(1, size+1)))
 
-        # Traz o tamanho do tabuleiro para retorna símbolos e números que deixam o código mais intuitivo
+        # With the size of the game table create a table using symbols
         for i in range(size):
-            # Exibe as barras que dividem as colunas e colocam números na lateral para facilitar a visualizçação do jogo
+            # Shows bars that divide the columns and places numbers next to them to make the game easier to see
             print(f"{i+1}  " + " | ".join(game_board[i]))
-            # Traços que dividem as linhas
+            # Traits that divide lines
             if i < size - 1:
                 print("  " + "-" * (4 * size - 1))
 
 
-    # Função das jogadas dos jogadores
+    # Function of the plays of the players
     def make_move(self, game_board, player, position):
-        # Define a posição de jogada do jogador seja ele quem for
+        # Defines the player's playing position, regardless of who they are
         line, column = position
-        # Verifica se a posição está disponível e permite a jogada do jogador qualquer
+        # Checks if there is an open position and allows moves by any player
         if game_board[line-1][column-1] == " ":
             game_board[line-1][column-1] = player
             return True
         return False
 
 
-    # Função que verifica quem venceu
+    # Function that checks who the winner is
     def checks_winner(self, game_board, player):
-        # Váriavel que retorna o tamanho do tabuleiro como uma tupla
+        # Variable that returns the value from the game table as a tuple
         size = game_board.shape[0]
-        # Verificar linhas
+        # Checks the lines
         for i in range(size):
-            # Verifica a vitória linha por linha e retorna verdadeiro se isso acontecer
+            # Checks for win line by line and returns True if it does
             if np.all(game_board[i] == player):
                 return True
-        # Verificar colunas
+        # Checks the columns
         for j in range(size):
-            # Verifica a vitória coluna por coluna e retorna verdadeiro se isso acontecer
+            # Checks for win column by column and returns True if it does
             if np.all(game_board[:, j] == player):
                 return True
-        # Verificar diagonais. Na diagonal secundária o tabuleiro inverte, sendo lido também
+        # Check the diagonals. On the secondary diagonal, the board is inverted, and is also read
         if np.all(np.diagonal(game_board) == player) or np.all(np.diagonal(np.fliplr(game_board)) == player):
             return True
         return False
 
 
-    # Função que irá rodar o jogo quando for chamada
+    # Function that will run the game as be called
     def play(self):
-        # Pede para informar o tamanho do tabuleiro
+        # Asks to inform the size of the game table
         size = int(input("Informe o tamanho do tabuleiro: "))
-        # Cria o tabuleiro conforme o tamanho dele
+        # Creates the game table of the according to size him
         game_board = self.create_game_board(size)
-        # Definem os jogadores dentro de uma lista
+        # Defines players in a list
         players = ["X", "O"]
-        # Contador
+        # counter
         current_player = 0
 
-        # Fica em iteração em quanto for verdadeiro
+        # Will be iterating as long as it is true
         while True:
-            # Chama a função que cria o tabuleiro
+            # Call function that creates the game table
             self.show_game_board(game_board)
-            # Como o jogador atual é 0, que começa é o X
+            # As the first player is 0, X is the one who starts
             player = players[current_player]
-            # Pede para o jogador informar a linha e a coluna
+            # Ask to the player inform the line and the column
             position = input(f"Jogador '{player}', informe a posição (linha, coluna): ")
-            # Transforma a string posicao em uma tupla de inteiros separados por vírgula através do split, e o map aplica
-            # o int a cada posição
+            # Transforms the position string on a tuple of ints split to commas through the "split" function, and the map apply the int the each position
             position = tuple(map(int, position.split(",")))
 
             try:
-                # Verfica cada passo para se considerar vitória para o jogador
+                # Checks each step to consider a player's victory
                 if self.make_move(game_board, player, position):
                     if self.checks_winner(game_board, player):
                         self.show_game_board(game_board)
                         print(f"Parabéns! O jogador '{player}' venceu!")
                         break
-                    # Usa uma função que verifica se tem algum espaço não nulo na matriz, se não houver, ela retorna nulo
-                    # Executando assim, a condicional que define o empate
+                    # Use the function that checks if there is any non-null place in the array, if not, it returns null
+                    # Then, executing the conditional that defines the tie
                     elif np.count_nonzero(game_board == " ") == 0:
                         self.show_game_board(game_board)
                         print("Empate!")
                         break
-                    # Se nada ocorreu, o jogo passa para o próximo jogador
+                    # If this doesn't happen, the game will go to the next level
                     current_player = (current_player + 1) % 2
-                # Se nenhuma das condicionais anteriores executaram, então a posição será inválida
+                # If none of the conditionals are executed, then invalid position
                 else:
                     print("Posição inválida. Tente novamente.")
             
@@ -117,10 +116,10 @@ class TicTacToe:
                 print("Ocorreu algum problema!! Tente novamente!!")
 
 
-    # Função para separar, de maneira mais bonita, as coisas no terminal
+    # Function to beautifully divide things in the terminal
     def separate(self):
         print("=" * 95)
         
 
 tic_tac_toe = TicTacToe()
-tic_tac_toe.play() # Colocando o jogo para rodar
+tic_tac_toe.play() # Initializes the game
