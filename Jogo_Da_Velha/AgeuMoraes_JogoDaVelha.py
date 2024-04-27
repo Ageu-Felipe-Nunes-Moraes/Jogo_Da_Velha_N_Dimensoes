@@ -2,97 +2,97 @@
 import numpy as np  # Bibliotecas para manipular matrizes
 
 # Função que cria os tabuleiros de várias dimensões
-def criar_tabuleiro(tamanho):
+def create_game_board(size):
     # Criando o tabuleiro inicialmente vazio
-    return np.full((tamanho, tamanho), " ")
+    return np.full((size, size), " ")
 
 
 # Função que exibe o tabuleiro com numerações na parte de cima e das laterais para guiar o jogador
-def exibir_tabuleiro(tabuleiro):
+def show_game_board(game_board):
     # Váriavel que retorna o tamanho do tabuleiro como uma tupla
-    tamanho = tabuleiro.shape[0]
+    size = game_board.shape[0]
 
     # Exibe números na parte de cima que facilitam a visualização do jogo
-    print("   " + "   ".join(str(i) for i in range(1, tamanho+1)))
+    print("   " + "   ".join(str(i) for i in range(1, size+1)))
 
     # Traz o tamanho do tabuleiro para retorna símbolos e números que deixam o código mais intuitivo
-    for i in range(tamanho):
+    for i in range(size):
         # Exibe as barras que dividem as colunas e colocam números na lateral para facilitar a visualizçação do jogo
-        print(f"{i+1}  " + " | ".join(tabuleiro[i]))
+        print(f"{i+1}  " + " | ".join(game_board[i]))
         # Traços que dividem as linhas
-        if i < tamanho - 1:
-            print("  " + "-" * (4 * tamanho - 1))
+        if i < size - 1:
+            print("  " + "-" * (4 * size - 1))
 
 
 # Função das jogadas dos jogadores
-def fazer_jogada(tabuleiro, jogador, posicao):
+def make_move(game_board, player, position):
     # Define a posição de jogada do jogador seja ele quem for
-    linha, coluna = posicao
+    line, column = position
     # Verifica se a posição está disponível e permite a jogada do jogador qualquer
-    if tabuleiro[linha-1][coluna-1] == " ":
-        tabuleiro[linha-1][coluna-1] = jogador
+    if game_board[line-1][column-1] == " ":
+        game_board[line-1][column-1] = player
         return True
     return False
 
 
 # Função que verifica quem venceu
-def verificar_vitoria(tabuleiro, jogador):
+def checks_winner(game_board, player):
     # Váriavel que retorna o tamanho do tabuleiro como uma tupla
-    tamanho = tabuleiro.shape[0]
+    size = game_board.shape[0]
     # Verificar linhas
-    for i in range(tamanho):
+    for i in range(size):
         # Verifica a vitória linha por linha e retorna verdadeiro se isso acontecer
-        if np.all(tabuleiro[i] == jogador):
+        if np.all(game_board[i] == player):
             return True
     # Verificar colunas
-    for j in range(tamanho):
+    for j in range(size):
         # Verifica a vitória coluna por coluna e retorna verdadeiro se isso acontecer
-        if np.all(tabuleiro[:, j] == jogador):
+        if np.all(game_board[:, j] == player):
             return True
     # Verificar diagonais. Na diagonal secundária o tabuleiro inverte, sendo lido também
-    if np.all(np.diagonal(tabuleiro) == jogador) or np.all(np.diagonal(np.fliplr(tabuleiro)) == jogador):
+    if np.all(np.diagonal(game_board) == player) or np.all(np.diagonal(np.fliplr(game_board)) == player):
         return True
     return False
 
 
 # Função que irá rodar o jogo quando for chamada
-def jogar():
+def play():
     # Pede para informar o tamanho do tabuleiro
-    tamanho = int(input("Informe o tamanho do tabuleiro: "))
+    size = int(input("Informe o tamanho do tabuleiro: "))
     # Cria o tabuleiro conforme o tamanho dele
-    tabuleiro = criar_tabuleiro(tamanho)
+    game_board = create_game_board(size)
     # Definem os jogadores dentro de uma lista
-    jogadores = ["X", "O"]
+    players = ["X", "O"]
     # Contador
-    jogador_atual = 0
+    current_player = 0
 
     # Fica em iteração em quanto for verdadeiro
     while True:
         # Chama a função que cria o tabuleiro
-        exibir_tabuleiro(tabuleiro)
+        show_game_board(game_board)
         # Como o jogador atual é 0, que começa é o X
-        jogador = jogadores[jogador_atual]
+        player = players[current_player]
         # Pede para o jogador informar a linha e a coluna
-        posicao = input(f"Jogador '{jogador}', informe a posição (linha, coluna): ")
+        position = input(f"Jogador '{player}', informe a posição (linha, coluna): ")
         # Transforma a string posicao em uma tupla de inteiros separados por vírgula através do split, e o map aplica
         # o int a cada posição
-        posicao = tuple(map(int, posicao.split(",")))
+        position = tuple(map(int, position.split(",")))
 
         try:
             # Verfica cada passo para se considerar vitória para o jogador
-            if fazer_jogada(tabuleiro, jogador, posicao):
-                if verificar_vitoria(tabuleiro, jogador):
-                    exibir_tabuleiro(tabuleiro)
-                    print(f"Parabéns! O jogador '{jogador}' venceu!")
+            if make_move(game_board, player, position):
+                if checks_winner(game_board, player):
+                    show_game_board(game_board)
+                    print(f"Parabéns! O jogador '{player}' venceu!")
                     break
                 # Usa uma função que verifica se tem algum espaço não nulo na matriz, se não houver, ela retorna nulo
                 # Executando assim, a condicional que define o empate
-                elif np.count_nonzero(tabuleiro == " ") == 0:
-                    exibir_tabuleiro(tabuleiro)
+                elif np.count_nonzero(game_board == " ") == 0:
+                    show_game_board(game_board)
                     print("Empate!")
                     break
                 # Se nada ocorreu, o jogo passa para o próximo jogador
-                jogador_atual = (jogador_atual + 1) % 2
+                current_player = (current_player + 1) % 2
             # Se nenhuma das condicionais anteriores executaram, então a posição será inválida
             else:
                 print("Posição inválida. Tente novamente.")
@@ -102,20 +102,20 @@ def jogar():
 
 
 # Função para separar, de maneira mais bonita, as coisas no terminal
-def separar():
+def separate():
     print("=" * 95)
 
 
-separar()
+separate()
 print("ESSE JOGO DA VELHA FOI FEITO PARA JOGAR DE DUAS PESSOAS\n")
 print("VOCÊ TEM QUE INFORMAR O TAMANHO DO TABULEIRO ")
-print("EXEMPLO: (3, 5, 7, 9...)\n")
+print("EXEMPLO: (3, 5, 7, 9,..., n)\n")
 print("O 'X' COMEÇA O JOGO\n")
 print("ESCOLHA A POSIÇÃO QUE DESEJAR")
 print("VOCÊ PODE SE GUIAR PELOS NÚMEROS NA LATERAL E NA PARTE DE CIMA")
 print("OS VALORES DA POSIÇÃO QUE VOCÊ DESEJA JOGAR, TEM QUE SER SEPARADOS POR ','")
 print("EXEMPLO DE JOGADA: 2,3\n")
 print("BOA SORTE! VOCÊ VAI PRECISAR;)\n")
-separar()
+separate()
 # Colocando o jogo para rodar
-jogar()
+play()
